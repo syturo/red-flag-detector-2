@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detector de Red Flags</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 1rem;
+      background-color: #e63946;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #ffe6e6;
+      border-left: 5px solid #e63946;
+      border-radius: 8px;
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 Detector de Red Flags</h1>
+    <textarea id="inputTexto" rows="6" placeholder="Pega aquí tu mensaje o conversación..."></textarea>
+    <button onclick="analizarTexto()">Analizar</button>
+    <div class="result" id="resultado" style="display:none;"></div>
+  </div>
+
+  <script>
+    const patrones = {
+      "Celos Excesivos": [
+        /me revisa el celular/i,
+        /no quiere que hable con nadie/i,
+        /se molesta si salgo sin avisarle/i,
+        /me pide ubicación todo el tiempo/i,
+      ],
+      "Control": [
+        /me dice cómo vestirme/i,
+        /no le gusta que tenga amigos/i,
+        /me prohíbe ver a mi familia/i,
+        /quiere saber todo lo que hago/i,
+      ],
+      "Violencia": [
+        /me ha gritado/i,
+        /me ha empujado/i,
+        /me ha amenazado/i,
+        /rompe cosas cuando se enoja/i,
+      ],
+      "Manipulación Emocional": [
+        /si lo dejo dice que se va a matar/i,
+        /me hace sentir culpable de todo/i,
+        /dice que soy su única razón para vivir/i,
+        /usa el llanto para que no me vaya/i,
+      ],
+      "Mentiras Frecuentes": [
+        /le encontré mensajes ocultos/i,
+        /me dice una cosa y luego otra/i,
+        /borra conversaciones/i,
+        /niega cosas obvias/i,
+      ]
+    };
+
+    function analizarTexto() {
+      const texto = document.getElementById("inputTexto").value;
+      const resultado = {};
+
+      for (let categoria in patrones) {
+        const coincidencias = patrones[categoria].filter(p => p.test(texto));
+        if (coincidencias.length > 0) {
+          resultado[categoria] = coincidencias.length;
+        }
+      }
+
+      const contenedor = document.getElementById("resultado");
+      contenedor.style.display = "block";
+      if (Object.keys(resultado).length === 0) {
+        contenedor.innerHTML = "<p>No se detectaron red flags.</p>";
+      } else {
+        let html = "<ul>";
+        for (let cat in resultado) {
+          html += `<li><strong>⚠️ ${cat}</strong>: ${resultado[cat]} coincidencia(s)</li>`;
+        }
+        html += "</ul>";
+        contenedor.innerHTML = html;
+      }
+    }
+  </script>
+</body>
+</html>
